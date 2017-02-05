@@ -37,9 +37,9 @@
 
 (defn pagination []
   [:ul.pagination.offset-md-5
-   (if (> @(customer-page) 0) [page-item "<" (- @(customer-page) 1)])
+   (if (not (service/first-page)) [page-item "<" (- @(customer-page) 1)])
    [page-item @(customer-page) @(customer-page)]
-   [page-item ">" (+ @(customer-page) 1)]])
+   (if (not (service/last-page)) [page-item ">" (+ @(customer-page) 1)])])
 
 (defn customer-table []
   [:table {:class "table table-hover table-bordered"}
@@ -51,7 +51,7 @@
 (defn customers-page []
   [:div.container
    [customer-table]
-   [pagination] [:div (str @(customer-page) @(table-max-rows))]
+   [pagination]
    [:div [:button.btn.btn-primary {:on-click #(routes/forward "#/customers/create")} "Add Customer"]]])
 
 

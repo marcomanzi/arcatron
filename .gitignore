@@ -12,3 +12,4 @@ profiles.clj
 /log
 .idea/
 *.iml
+*.log

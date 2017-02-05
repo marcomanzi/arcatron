@@ -34,7 +34,7 @@
 (defrecord Customer [uuid name surname fiscal_code phone_number invoices_payed profit_margin address city])
 
 (defn generate-customer []
-  (map->Customer {:uuid (rand-int 1000)
+  (map->Customer {:uuid (rand-int 1000000000)
                   :name (random-name)
                   :surname (random-surname)
                   :fiscal_code (random-fc-generator)

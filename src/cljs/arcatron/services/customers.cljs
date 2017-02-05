@@ -8,12 +8,27 @@
 
 (def ^{:private true} customers-db (r/atom initial-customers ))
 
-(defn customers [page]
-  (let [size (:table-max-rows @db/app-state)
-        start (* page size)
-        end (+ start size)]
-    (r/atom (subvec (vec @customers-db) start end))))
+(defn count-customers []
+  (count @customers-db))
+
+(defn first-page [] (= 0 @(db/customer-page)))
+
+(defn last-page []
+  (= @(db/customer-page) (quot (count-customers) (:table-max-rows @db/app-state)) ))
 
 (defn get-customer [uuid]
   (let [customer (first  (filter #(= (get % :uuid) (int  uuid)) @customers-db))]
     customer))
+
+(defn customers [page]
+  (let [size (:table-max-rows @db/app-state)
+        max-customers (count-customers)
+        max-start (- max-customers 1)
+        start (let [page-start (* page size)]
+                (cond 
+                  (< page-start 0) 0
+                  (> page-start max-start) (- max-customers size)
+                  :else page-start))
+        end (let [end (+ start size)]
+              (if (> end max-customers) max-customers end))]
+    (r/atom (subvec (vec @customers-db) start end))))
