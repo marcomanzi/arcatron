@@ -8,9 +8,7 @@
             [arcatron.ajax :refer [load-interceptors!]]
             [ajax.core :refer [GET POST]]
             [arcatron.models :as models]
-            [arcatron.customers.routes :as cr]
-            [arcatron.customers.table :as ct]
-            [arcatron.customers.details :as cd]
+            [arcatron.routes :as routes]
             [arcatron.state :as db])
   (:import goog.History))
 
@@ -31,21 +29,9 @@
         (when-not @collapsed? {:class "in"})
         [:a.navbar-brand {:href "#/customers"} "Arcatron"]
         [:ul.nav.navbar-nav
-         [nav-link "#/customers" "Customers" :about collapsed?]]]])))
+         [nav-link "#/customers" "Customers" :about collapsed?]
+         [nav-link "#/prices" "Prices" :about collapsed?]]]])))
 
-(def pages
-  {:customers #'arcatron.customers.table/customers-page
-   :customer-details #'arcatron.customers.details/customer-detail-page})
-
-(defn page []
-  [(pages (session/get :page))])
-
-;; -------------------------
-;; Routes
-(secretary/set-config! :prefix "#")
-
-(secretary/defroute "/" []
-  (session/put! :page :customers))
 
 ;; -------------------------
 ;; History
@@ -62,11 +48,13 @@
 ;; -------------------------
 ;; Initialize app
 (defn fetch-docs! []
-  (GET "/docs" {:handler #(session/put! :docs %)}))
+  1
+  ;;(GET "/docs" {:handler #(session/put! :docs %)})
+  )
 
 (defn mount-components []
   (r/render [#'navbar] (.getElementById js/document "navbar"))
-  (r/render [#'page] (.getElementById js/document "app")))
+  (r/render [#'arcatron.routes/page] (.getElementById js/document "app")))
 
 (defn init! []
   (load-interceptors!)
