@@ -33,8 +33,10 @@
 
 (defrecord Customer [uuid name surname fiscal_code phone_number invoices_payed profit_margin address city])
 
+(defn big-rand-int [] (rand-int 100000))
+
 (defn generate-customer []
-  (map->Customer {:uuid (rand-int 1000000000)
+  (map->Customer {:uuid (big-rand-int)
                   :name (random-name)
                   :surname (random-surname)
                   :fiscal_code (random-fc-generator)
@@ -43,3 +45,11 @@
 
 (defn empty-customer []
   (map->Customer {:uuid nil}))
+
+(defrecord Price [uuid destination prefix price-per-minute])
+
+(defn generate-price [destination prefix price-per-minute]
+  (->Price (big-rand-int) destination prefix price-per-minute))
+
+(defn empty-price []
+  (map->Price {:uuid nil}))

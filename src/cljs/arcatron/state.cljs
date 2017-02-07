@@ -7,7 +7,8 @@
                         :window-height       (.-height js/window)
                         :prev-table-max-rows 15
                         :table-max-rows      15
-                        :customer-page       0}))
+                        :customer-page       0
+                        :price-page          0}))
 
 (defn set-table-max-rows []
   (let [h (:window-height @app-state)
@@ -38,6 +39,10 @@
 (defn customer-page
   ([] (r/atom (:customer-page @app-state)))
   ([current-page] (swap! app-state assoc :customer-page current-page)))
+
+(defn price-page
+  ([] (r/atom (:price-page @app-state)))
+  ([current-page] (swap! app-state assoc :price-page current-page)))
 
 (defn table-max-rows
   [] (r/atom (:table-max-rows @app-state)))

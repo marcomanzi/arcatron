@@ -7,7 +7,7 @@
             [secretary.core :as secretary :include-macros true]
             [clojure.set :as set]
             [arcatron.services.customers :as service]
-            [arcatron.routes :as routes]
+            [arcatron.utilities :refer [forward]]
             [arcatron.state :refer [customer-page table-max-rows]]))
 
 (defn th-with-input [label]
@@ -17,7 +17,7 @@
   [{:keys [uuid name surname fiscal_code phone_number invoices_payed] :as customer}]
   [:tr {:class    "hover-pointer"
         :on-click #(let [url (str "#/customers/" uuid)]
-                     (routes/forward url))}
+                     (forward url))}
    [:td name]
    [:td surname]
    [:td fiscal_code]
@@ -48,10 +48,10 @@
     (for [customer @(service/customers @(customer-page))]
       ^{:key (:uuid customer)} [customer-row customer])]])
 
-(defn customers-page []
+(defn page []
   [:div.container
    [customer-table]
    [pagination]
-   [:div [:button.btn.btn-primary {:on-click #(routes/forward "#/customers/create")} "Add Customer"]]])
+   [:div [:button.btn.btn-primary {:on-click #(forward "#/customers/create")} "Add Customer"]]])
 
 

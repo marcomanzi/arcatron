@@ -7,7 +7,7 @@
             [secretary.core :as secretary :include-macros true]
             [clojure.set :as set]
             [arcatron.services.customers :as service]
-            [arcatron.routes :as routes]))
+            [arcatron.utilities :refer [forward]]))
 
 (defn atom-input [atom-value label field]
   [:div.form-group.col-md-6
@@ -25,7 +25,7 @@
     [:h1 (str "Details for " (:name @customer) " " (:surname @customer))]
     [:h1 "New Customer"]))
 
-(defn customer-detail-page []
+(defn page []
   (let [uuid (session/get :uuid)
         customer (r/atom (if uuid
                            (service/get-customer uuid)
@@ -44,4 +44,4 @@
              [:legend "Billing Informations"]
              [atom-input customer "Margin" :profit-margin]]
             [:button.btn.btn-primary.col-md-2 "Save"]
-            [:button.btn.btn-primary.col-md-2.offset-md-1 {:on-click #(routes/forward "#/customers")} "Cancel"]])))
+            [:button.btn.btn-primary.col-md-2.offset-md-1 {:on-click #(forward "#/customers")} "Cancel"]])))
