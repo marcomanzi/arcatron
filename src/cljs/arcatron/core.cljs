@@ -8,6 +8,7 @@
             [arcatron.ajax :refer [load-interceptors!]]
             [ajax.core :refer [GET POST]]
             [arcatron.models :as models]
+            [arcatron.customers.routes :as cr]
             [arcatron.customers.table :as ct]
             [arcatron.customers.details :as cd]
             [arcatron.state :as db])
@@ -28,29 +29,12 @@
         {:on-click #(swap! collapsed? not)} "☰"]
        [:div.collapse.navbar-toggleable-xs
         (when-not @collapsed? {:class "in"})
-        [:a.navbar-brand {:href "#/"} "Arcatron"]
+        [:a.navbar-brand {:href "#/customers"} "Arcatron"]
         [:ul.nav.navbar-nav
-         [nav-link "#/" "Customers" :home collapsed?]
-         [nav-link "#/prices" "Prices" :about collapsed?]
-         [nav-link "#/customers" "New-Customers" :about collapsed?]]]])))
-
-(defn prices-page []
-  [:div.container
-   [:div.row
-    [:div.col-md-12
-     [:img {:src (str js/context "/img/warning_clojure.png")}]]]])
-
-(defn home-page []
-  [:div.container
-   (when-let [docs (session/get :docs)]
-     [:div.row>div.col-sm-12
-      [:div {:dangerouslySetInnerHTML
-             {:__html (md->html docs)}}]])])
+         [nav-link "#/customers" "Customers" :about collapsed?]]]])))
 
 (def pages
-  {:home #'home-page
-   :prices #'prices-page
-   :customers #'arcatron.customers.table/customers-page
+  {:customers #'arcatron.customers.table/customers-page
    :customer-details #'arcatron.customers.details/customer-detail-page})
 
 (defn page []
@@ -61,22 +45,7 @@
 (secretary/set-config! :prefix "#")
 
 (secretary/defroute "/" []
-  (session/put! :page :home))
-
-(secretary/defroute "/prices" []
-  (session/put! :page :prices))
-
-(secretary/defroute "/customers" []
   (session/put! :page :customers))
-
-(secretary/defroute "/customers/:uuid" {:as params}
-  (doall (session/put! :page :customer-details)
-         (session/put! :uuid (:uuid params))))
-
-(secretary/defroute "/customers/create" []
-                    (session/put! :page :customer-details)
-                    (session/remove! :uuid))
-
 
 ;; -------------------------
 ;; History

@@ -44,4 +44,4 @@
              [:legend "Billing Informations"]
              [atom-input customer "Margin" :profit-margin]]
             [:button.btn.btn-primary.col-md-2 "Save"]
-            [:button.btn.btn-primary.col-md-2.offset-md-1 {:on-click #(routes/forward "#/customers/create")} "Cancel"]])))
+            [:button.btn.btn-primary.col-md-2.offset-md-1 {:on-click #(routes/forward "#/customers")} "Cancel"]])))
