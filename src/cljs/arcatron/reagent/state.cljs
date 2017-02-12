@@ -9,14 +9,14 @@
   (keyword (str table-id "-page")))
 
 (defn table-page
-  ([table-id] (r/atom ((table-page-key table-id) @internal-state)))
+  ([table-id] (r/atom (get @internal-state (table-page-key table-id) 0)))
   ([table-id current-page]
    (swap! internal-state assoc (table-page-key table-id) current-page)))
 
 (defn first-page? [table-id] (= 0 @(table-page table-id)))
 
-(defn last-page? [table-id count-elements]
-  (= @(table-page table-id) (quot (- count-elements 1) (:table-max-rows @internal-state)) ))
+(defn last-page? [table-id count-elements-provider]
+  (= @(table-page table-id) (quot (- (count-elements-provider) 1) (:table-max-rows @internal-state)) ))
 
 
 (defn set-table-max-rows []
@@ -36,3 +36,4 @@
   ([event] (set-windows-informations)))
 
 (.addEventListener js/window "resize" set-windows-informations)
+(set-windows-informations)

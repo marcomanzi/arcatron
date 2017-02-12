@@ -11,11 +11,6 @@
 (defn count-customers []
   (count @customers-db))
 
-(defn first-page [] (= 0 @(db/customer-page)))
-
-(defn last-page []
-  (= @(db/customer-page) (quot (- (count-customers) 1) (:table-max-rows @db/app-state)) ))
-
 (defn get-customer [uuid]
   (let [customer (first  (filter #(= (get % :uuid) (int  uuid)) @customers-db))]
     customer))

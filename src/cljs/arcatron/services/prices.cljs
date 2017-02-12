@@ -16,11 +16,6 @@
 (defn count-all []
   (count @db))
 
-(defn first-page? [] (= 0 @(db/price-page)))
-
-(defn last-page? []
-  (= @(db/price-page) (quot (- (count-all) 1) (:table-max-rows @db/app-state)) ))
-
 (defn get-price [uuid]
   (let [customer (first (filter #(= (get % :uuid) (int  uuid)) @db))]
     customer))
