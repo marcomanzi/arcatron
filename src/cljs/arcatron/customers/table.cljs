@@ -8,7 +8,8 @@
             [clojure.set :as set]
             [arcatron.services.customers :as service]
             [arcatron.utilities :refer [forward]]
-            [arcatron.state :refer [customer-page table-max-rows]]))
+            [arcatron.state :refer [customer-page table-max-rows]]
+            [arcatron.reagent.table :refer [paginated-table table-header]]))
 
 (defn th-with-input [label]
   [:th label [:input.table-search]])
@@ -50,8 +51,18 @@
 
 (defn page []
   [:div.container
-   [customer-table]
-   [pagination]
+   (comment [customer-table]
+            [pagination])
+   [paginated-table {:id "customer-table"
+                     :headers [(table-header "Name" true)
+                               (table-header "Surname" true)
+                               (table-header "Fiscal Code")
+                               (table-header "Telephon Number")
+                               (table-header "Invoices Payed")]
+                     :element-key :uuid
+                     :on-element-click-url #(str "#/customer/" (:uuid %))
+                     :elements @(service/customers @(customer-page))
+                     :row-fields [:name :surname :fiscal_code :phone_number :invoices_payed]}]
    [:div [:button.btn.btn-primary {:on-click #(forward "#/customers/create")} "Add Customer"]]])
 
 
