@@ -19,7 +19,6 @@
                                                           (let [new-value (-> % .-target .-value)]
                                                             (assoc atom field new-value))))}]]])
 
-
 (defn detail-title [price]
   (if (:uuid @price)
     [:h1 (str "Details for destination " (:destination @price))]
@@ -35,6 +34,6 @@
             [:fieldset.form-group
              [atom-input price "Destination" :destination]
              [atom-input price "Prefix" :prefix]
-             [atom-input price "Price Per minute" :price-per-minute]]
+             [atom-input price "Price Per minute" :price_per_minute]]
             [:button.btn.btn-primary.col-md-2 "Save"]
             [:button.btn.btn-primary.col-md-2.offset-md-1 {:on-click #(forward "#/prices")} "Cancel"]])))

@@ -4,7 +4,10 @@
             [schema.core :as s]
             [compojure.api.meta :refer [restructure-param]]
             [buddy.auth.accessrules :refer [restrict]]
-            [buddy.auth :refer [authenticated?]]))
+            [buddy.auth :refer [authenticated?]]
+            [arcatron.models :as m]
+            [arcatron.services.customers :as c])
+  (:import (java.util UUID)))
 
 (defn access-error [_ _]
   (unauthorized {:error "unauthorized"}))
@@ -32,6 +35,26 @@
        :auth-rules authenticated?
        :current-user user
        (ok {:user user}))
+  (context "/customers" []
+    :tags ["Customers"]
+
+    (GET "/get" []
+      :query-params [uuid :- String]
+      :summary      "Return the customer with the uuid in input"
+      (ok (into {} (c/get uuid))))
+    (GET "/get-paginated" []
+      :query-params [page :- Long, size :- Long]
+      :summary      "Return the customer with the uuid in input"
+      (ok (into {} (c/get-paginated page size))))
+    ; Exemple customer for test {"customer": {"uuid" : "53227", "name" : "Enrico", "surname" : "Summer", "fiscal_code" : "QHJMDO99G63O678M", "phone_number" : "382119121", "invoices_payed" false, "profit_margin" : "1.0", "address" : "Strange Street", "city" : "Test"}}
+    ; Example customer for test {"customer": {"uuid" : "53227", "name" : "Enrico", "surname" : "Summer", "fiscal_code" : "QHJMDO99G63O678M", "phone_number" : "382119121", "invoices_payed" false, "profit_margin" : "1.0", "address" : "Strange Street", "city" : "Test"}}
+    (POST "/create" []
+      :return      Long
+      :body-params [customer]
+      :summary     "x-y with body-parameters."
+      (ok (c/create-customer! customer)))
+    )
+
   (context "/api" []
     :tags ["thingie"]
 

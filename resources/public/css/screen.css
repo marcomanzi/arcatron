@@ -80,5 +80,8 @@ input.table-search {
         width: 100%;
         max-width: 100%;
     }
+    .file-input {
+        margin-bottom:0 !important;
+    }
 }
 

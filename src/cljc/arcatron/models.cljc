@@ -1,4 +1,5 @@
-(ns arcatron.models)
+(ns arcatron.models
+  #?@(:clj [(:import (java.util UUID))]))
 
 (def names ["Marco" "Valerio" "Barbara" "Mirko" "Vincenzo" "Agnese" "Assunta" "Enrico" "Buffy" "Giles" "Willow"
             "Giles" "Vladimir" "Maria" "Salvatore"])
@@ -35,8 +36,12 @@
 
 (defn big-rand-int [] (rand-int 100000))
 
+(defn random-uuid []
+  #?(:clj (UUID/randomUUID)
+     :cljs (cljs.core/random-uuid)))
+
 (defn generate-customer []
-  (map->Customer {:uuid (big-rand-int)
+  (map->Customer {:uuid (random-uuid)
                   :name (random-name)
                   :surname (random-surname)
                   :fiscal_code (random-fc-generator)
@@ -46,10 +51,10 @@
 (defn empty-customer []
   (map->Customer {:uuid nil}))
 
-(defrecord Price [uuid destination prefix price-per-minute])
+(defrecord Price [uuid destination prefix price_per_minute])
 
-(defn generate-price [destination prefix price-per-minute]
-  (->Price (big-rand-int) destination prefix price-per-minute))
+(defn generate-price [destination prefix price_per_minute]
+  (->Price (big-rand-int) destination prefix price_per_minute))
 
 (defn empty-price []
   (map->Price {:uuid nil}))
