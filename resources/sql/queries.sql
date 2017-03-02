@@ -53,3 +53,57 @@ WHERE uuid = :uuid
 -- :name delete-all-customers! :! :n
 -- :doc delete all customers
 DELETE FROM customers
+
+-- :name find-by-phone-number :? :1
+-- :doc Fine the customer with phone number in input
+SELECT * FROM customers
+WHERE phone_number = :phone_number
+
+-- :name create-price! :! :n
+-- :doc creates a new price record
+INSERT INTO prices
+(uuid, destination, prefix, price_per_minute)
+VALUES (:uuid, :destination, :prefix, :price_per_minute)
+
+-- :name update-price! :! :n
+-- :doc update an existing price record
+UPDATE prices
+SET destination = :destination, prefix= :prefix, price_per_minute = :price_per_minute
+WHERE uuid = :uuid
+
+-- :name get-price :? :1
+-- :doc retrieve a customer given the id.
+SELECT * FROM prices
+WHERE uuid = :uuid
+
+-- :name get-price-by-prefix :? :*
+-- :doc retrieve paginated customers
+SELECT * FROM prices p where p.prefix like :prefix
+
+-- :name delete-price! :! :n
+-- :doc delete a customer given the id
+DELETE FROM prices
+WHERE uuid = :uuid
+
+-- :name delete-all-prices! :! :n
+-- :doc delete all customers
+DELETE FROM prices
+
+-- :name create-cdr! :! :n
+-- :doc creates a new price record
+INSERT INTO call_data_records
+(uuid, time_stamp, record_sequence_number, call_duration, caller, receiver, nv, cid, id_service, caller_uuid, price_uuid, errors)
+VALUES (:uuid, :time_stamp, :record_sequence_number, :call_duration, :caller, :receiver, :nv, :cid, :id_service, :caller_uuid, :price_uuid, :errors)
+
+-- :name get-all-cdrs :? :*
+-- :doc retrieve all cdrs in the system
+SELECT * FROM call_data_records
+
+-- :name delete-cdr! :! :n
+-- :doc delete a cdr given the id
+DELETE FROM call_data_records
+WHERE uuid = :uuid
+
+-- :name delete-all-cdrs! :! :n
+-- :doc delete all call data records
+DELETE FROM call_data_records

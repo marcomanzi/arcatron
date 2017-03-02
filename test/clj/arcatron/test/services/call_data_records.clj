@@ -1,4 +1,4 @@
-(ns arcatron.test.services.customers
+(ns arcatron.test.services.call-data-records
   (:require [arcatron.db.core :refer [*db*] :as db]
             [luminus-migrations.core :as migrations]
             [clojure.test :refer :all]
@@ -6,7 +6,8 @@
             [arcatron.config :refer [env]]
             [mount.core :as mount]
             [arcatron.models :as models]
-            [arcatron.services.customers :as c]))
+            [arcatron.services.call-data-records :as cdrs])
+  (:import (java.io File)))
 
 (use-fixtures
   :once
@@ -17,9 +18,9 @@
     (migrations/migrate ["migrate"] (select-keys env [:database-url]))
     (f)))
 
-(def test-customers (atom []))
+(def test-call-data-records (atom []))
 
-(defn create-customer []
+#_(defn create-customer []
   (let [customer (models/generate-customer)
         _ (swap! test-customers conj customer)
         _ (c/create-customer! customer)]
@@ -29,17 +30,9 @@
   (jdbc/with-db-transaction
     [t-conn *db*]
     (jdbc/db-set-rollback-only! t-conn)
-    (let [_ (c/delete-all!)
-          customer (create-customer)
-          customer-phone (:phone_number customer)]
-      (is ((complement nil?) customer))
-      (is (= customer (c/get (:uuid customer))))
-      (is (= 1 (count (c/get-paginated 0 10))))
-      (is (= customer (c/find-by-phone-number customer-phone)))
-      (let [customer (create-customer)]
-        (is (= 2 (count (c/get-paginated 0 10))))
-        (is (= 1 (count (c/get-paginated 0 1))))
-        (is (= 1 (count (c/get-paginated 1 1))))
-        (c/delete! customer)
-        (is (= 1 (count (c/get-paginated 0 10)))))
-      )))
+    (let [_ (cdrs/delete-all!)
+          cdrs (cdrs/read-from-file "test/resources/test-cdrs.txt" )]
+      (is (= "" (:nv (second cdrs))))
+      (is (= "39159" (:receiver (second cdrs))))
+      (is (= "908646-0617954" (:cid (second cdrs))))
+      (is (= 1 (cdrs/create-cdr! (first cdrs)))))))

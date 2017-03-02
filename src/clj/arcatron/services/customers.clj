@@ -25,3 +25,8 @@
   "Delete all customers from the database"
   []
   (db/delete-all-customers!))
+
+(defn find-by-phone-number
+  "Retrieve the customer that has the phone number in input"
+  [phone-number]
+  (m/map->Customer (db/find-by-phone-number {:phone_number phone-number})))

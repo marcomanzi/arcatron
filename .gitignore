@@ -13,3 +13,5 @@ profiles.clj
 .idea/*
 *.iml
 *.log
+arcatron_dev.*
+arcatron_test.*
