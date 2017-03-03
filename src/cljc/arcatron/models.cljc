@@ -60,7 +60,19 @@
 (defn empty-price []
   (map->Price {:uuid nil}))
 
-(defrecord CallDataRecord [uuid time_stamp record_sequence_number call_duration caller receiver nv cid id_service caller_uuid price_uuid errors])
+(defrecord ^{:private true } CallDataRecord [uuid time_stamp record_sequence_number call_duration caller receiver nv cid id_service caller_uuid price_uuid errors])
+
+(defn ->call-data-record [values]
+  (let [base-cdr (apply ->CallDataRecord values)]
+    (if-let [errors-str (:errors base-cdr)]
+      (assoc base-cdr :errors (read-string errors-str))
+      (assoc base-cdr :errors []))))
+
+(defn map->call-data-record [map-values]
+  (let [base-cdr (map->CallDataRecord map-values)]
+    (if-let [errors-str (:errors base-cdr)]
+      (assoc base-cdr :errors (read-string errors-str))
+      (assoc base-cdr :errors []))))
 
 (defn to-date
   "Convert the string in a date 15/03/2016 15:51:18"
@@ -71,7 +83,7 @@
 
 (defn non-evaluated-call-data-record [cdr-values]
   (let [clean-values (map clojure.string/trim cdr-values)
-        cdr-with-all-strings (apply ->CallDataRecord (concat [(random-uuid)] clean-values [nil nil nil]))
+        cdr-with-all-strings (->call-data-record (concat [(random-uuid)] clean-values [nil nil nil]))
         cdr-sanitized (-> cdr-with-all-strings
                           (assoc :time_stamp (to-date (:time_stamp cdr-with-all-strings)))
                           (assoc :call_duration (Integer/parseInt (:call_duration cdr-with-all-strings))))]

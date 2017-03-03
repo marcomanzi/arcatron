@@ -3,21 +3,28 @@
             [arcatron.services.customers :as c]
             [arcatron.services.prices :as p]))
 
-(defn evalute-caller
-  [cdr]
-  (let [caller (c/find-by-phone-number (:caller cdr))]
-    (assoc cdr :caller_uuid (:uuid caller))))
-
-(defn evaluate-price
-  "Evaluate the price for the cdr"
-  [cdr]
-  (let [receiver (:receiver cdr)
-        price (p/get-price-by-prefix (subs receiver 0 5))]
-    (assoc cdr :price_uuid (:uuid price))))
-
 (defn load-cdrs
   "Load cdrs in the system retrieving the caller, the price, marking them with errors and saving in the database"
   [cdrs-non-valuated]
-  (let [cdrs-with-customers (map evalute-caller cdrs-non-valuated)
-        cdrs-with-prices (map evaluate-price cdrs-with-customers)]
-    (doall (map db/create-cdr! cdrs-with-prices))))
+  (letfn [(save-cdr! [{:keys [errors] :as cdr}]
+            (db/create-cdr! (assoc cdr :errors (str errors))))
+          (evalute-caller [cdr]
+            (let [caller (c/find-by-phone-number (:caller cdr))]
+              (assoc cdr :caller_uuid (:uuid caller))))
+          (evaluate-price [cdr]
+            (letfn [(retrieve-price-by-prefix [receiver]
+                      (let [price (p/get-price-by-prefix receiver)]
+                        (if (and (nil? price) (> (count receiver) 0))
+                          (retrieve-price-by-prefix (subs receiver 0 (dec (count receiver))))
+                          price)))]
+              (assoc cdr :price_uuid (:uuid (retrieve-price-by-prefix (:receiver cdr))))))
+          (null-field-check-cdr [field error {:keys [errors] :as cdr}]
+            (if (nil? (field cdr))
+              (assoc cdr :errors (conj errors error))
+              cdr))
+          (check-if-has-customer [cdr]
+            (null-field-check-cdr :caller_uuid :CUSTOMER_NOT_FOUND cdr))
+          (check-if-has-price [cdr]
+            (null-field-check-cdr :price_uuid :PRICE_NOT_FOUND cdr))]
+    (let [evaluated-cdrs (map (comp check-if-has-price check-if-has-customer evaluate-price evalute-caller) cdrs-non-valuated)]
+      (doall (map save-cdr! evaluated-cdrs)))))

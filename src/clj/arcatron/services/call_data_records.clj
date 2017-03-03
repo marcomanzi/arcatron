@@ -7,10 +7,6 @@
   [cdr]
   (db/create-cdr! cdr))
 
-(defn delete!
-  "Remove the call data record in input"
-  [cdr])
-
 (defn delete-all!
   "Remove the call data record in input"
   []
@@ -32,5 +28,5 @@
 (defn get-all
   "Retrieve all Cdrs from the database"
   []
-  (let [all-cdrs (db/get-all-cdrs)]
-    (map m/map->CallDataRecord all-cdrs)))
+  (->> (db/get-all-cdrs)
+       (map m/map->call-data-record)))

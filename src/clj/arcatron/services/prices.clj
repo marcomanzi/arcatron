@@ -10,7 +10,7 @@
 (defn get-price-by-prefix
   "Retrieve customers by page and size"
   [prefix]
-  (let [prices-by-prefix (db/get-price-by-prefix {:prefix (str prefix "%")})
+  (let [prices-by-prefix (db/get-price-by-prefix {:prefix prefix})
         prefix-count (fn [price] (count (:prefix price)))]
     (first (sort #(compare (prefix-count %1) (prefix-count %2)) prices-by-prefix))))
 

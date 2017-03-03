@@ -34,5 +34,4 @@
           cdrs (cdrs/read-from-file "test/resources/test-cdrs.txt" )]
       (is (= "" (:nv (second cdrs))))
       (is (= "39159" (:receiver (second cdrs))))
-      (is (= "908646-0617954" (:cid (second cdrs))))
-      (is (= 1 (cdrs/create-cdr! (first cdrs)))))))
+      (is (= "908646-0617954" (:cid (second cdrs)))))))

@@ -78,7 +78,7 @@ WHERE uuid = :uuid
 
 -- :name get-price-by-prefix :? :*
 -- :doc retrieve paginated customers
-SELECT * FROM prices p where p.prefix like :prefix
+SELECT * FROM prices p where p.prefix = :prefix
 
 -- :name delete-price! :! :n
 -- :doc delete a customer given the id
