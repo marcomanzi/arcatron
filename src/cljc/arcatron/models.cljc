@@ -1,5 +1,5 @@
 (ns arcatron.models
-  #?@(:clj [(:import (java.util UUID)
+  #?@(:clj [(:import [java.util UUID Date]
                      (java.text SimpleDateFormat))]))
 
 (def names ["Marco" "Valerio" "Barbara" "Mirko" "Vincenzo" "Agnese" "Assunta" "Enrico" "Buffy" "Giles" "Willow"
@@ -52,13 +52,13 @@
 (defn empty-customer []
   (map->Customer {:uuid nil}))
 
-(defrecord Price [uuid destination prefix price_per_minute])
+(defrecord Price [uuid destination prefix price_per_minute created_on])
 
 (defn generate-price [destination prefix price_per_minute]
-  (->Price (random-uuid) destination prefix price_per_minute))
+  (->Price (random-uuid) destination prefix price_per_minute (java.util.Date.)))
 
 (defn empty-price []
-  (map->Price {:uuid nil}))
+  (map->Price {:uuid nil :created_on (java.util.Date.)}))
 
 (defrecord ^{:private true } CallDataRecord [uuid time_stamp record_sequence_number call_duration caller receiver nv cid id_service caller_uuid price_uuid errors])
 

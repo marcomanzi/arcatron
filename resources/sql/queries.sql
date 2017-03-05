@@ -62,8 +62,8 @@ WHERE phone_number = :phone_number
 -- :name create-price! :! :n
 -- :doc creates a new price record
 INSERT INTO prices
-(uuid, destination, prefix, price_per_minute)
-VALUES (:uuid, :destination, :prefix, :price_per_minute)
+(uuid, destination, prefix, price_per_minute, created_on)
+VALUES (:uuid, :destination, :prefix, :price_per_minute, :created_on)
 
 -- :name update-price! :! :n
 -- :doc update an existing price record
@@ -75,6 +75,10 @@ WHERE uuid = :uuid
 -- :doc retrieve a customer given the id.
 SELECT * FROM prices
 WHERE uuid = :uuid
+
+-- :name get-prices :? :*
+-- :doc retrieve paginated prices
+SELECT * FROM prices p order by p.created_on desc limit :limit offset :offset
 
 -- :name get-price-by-prefix :? :*
 -- :doc retrieve paginated customers
