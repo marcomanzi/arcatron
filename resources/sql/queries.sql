@@ -41,6 +41,10 @@ WHERE uuid = :uuid
 SELECT * FROM customers
 WHERE uuid = :uuid
 
+-- :name count-customers :? :n
+-- :doc retrieve the count of customers
+SELECT count(*) FROM customers
+
 -- :name get-customers :? :*
 -- :doc retrieve paginated customers
 SELECT * FROM customers c order by c.surname, c.name desc limit :limit offset :offset
@@ -75,6 +79,10 @@ WHERE uuid = :uuid
 -- :doc retrieve a customer given the id.
 SELECT * FROM prices
 WHERE uuid = :uuid
+
+-- :name count-prices :? :n
+-- :doc retrieve count of prices
+SELECT count(*) FROM prices
 
 -- :name get-prices :? :*
 -- :doc retrieve paginated prices

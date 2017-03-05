@@ -31,6 +31,7 @@
                                (table-header "Price per Minute")]
                      :element-key :uuid
                      :on-element-click-url #(str "#/prices/" (:uuid %))
+                     :elements @(service/prices @(price-page))
                      :element-provider (partial service/prices)
                      :count-provider (partial service/count-all)
                      :row-fields [:destination :prefix :price_per_minute]}]

@@ -7,10 +7,16 @@
   [uuid]
   (m/map->Price (db/get-price {:uuid uuid})))
 
+(defn count-prices
+  "Max number of prices in the system"
+  []
+  (db/count-prices))
+
 (defn get-paginated
   "Retrieve customers by page and size"
   [page size]
-  (into [] (map #(m/map->Price %) (db/get-prices {:limit size :offset (* page size)}))))
+  (let [_ (println size)]
+    (into [] (map #(m/map->Price %) (db/get-prices {:limit (+ (* page size) size) :offset (* page size)})))))
 
 (defn get-price-by-prefix
   "Retrieve customers by page and size"
@@ -20,8 +26,8 @@
     (first (sort #(compare (prefix-count %1) (prefix-count %2)) prices-by-prefix))))
 
 (defn create-price!
-  [price]
-  (db/create-price! price))
+  [{:keys [destination prefix price_per_minute]}]
+  (db/create-price! (m/generate-price destination prefix price_per_minute)))
 
 (defn save-prices-in-file
   [file]

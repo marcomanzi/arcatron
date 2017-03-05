@@ -48,7 +48,7 @@
       :query-params [page :- Long, size :- Long]
       :summary      "Return the customer's page"
       (ok (into {} (c/get-paginated page size))))
-    ; Exemple customer for test {"customer": {"uuid" : "53227", "name" : "Enrico", "surname" : "Summer", "fiscal_code" : "QHJMDO99G63O678M", "phone_number" : "382119121", "invoices_payed" false, "profit_margin" : "1.0", "address" : "Strange Street", "city" : "Test"}}
+    ;Example customer for test {"customer": {"uuid" : "53227", "name" : "Enrico", "surname" : "Summer", "fiscal_code" : "QHJMDO99G63O678M", "phone_number" : "382119121", "invoices_payed" false, "profit_margin" : "1.0", "address" : "Strange Street", "city" : "Test"}}
     (POST "/create" []
       :return      Long
       :body-params [customer]
@@ -63,10 +63,14 @@
       :query-params [uuid :- String]
       :summary      "Return the price with the uuid in input"
       (ok (into {} (p/get uuid))))
+    (GET "/count" []
+      :summary      "Return the price's count"
+      (ok (p/count-prices)))
     (GET "/get-paginated" []
       :query-params [page :- Long, size :- Long]
       :summary      "Return the prices page"
-      (ok (into {} (p/get-paginated page size))))
+      (ok (p/get-paginated page size)))
+    ;Example price for test {"price": {"destination" : "Roma", "prefix" : "06", "price_per_minute" : "0.01"}}
     (POST "/create" []
       :return      Long
       :body-params [price]
