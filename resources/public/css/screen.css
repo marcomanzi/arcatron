@@ -75,13 +75,11 @@ input.table-search {
     cursor: pointer; cursor: hand;
 }
 
-@media (min-width: 1200px) {
-    .container {
-        width: 100%;
-        max-width: 100%;
-    }
-    .file-input {
-        margin-bottom:0 !important;
-    }
+.container {
+    width: 100%;
+    max-width: 100%;
 }
 
+.file-input {
+    margin-bottom:0 !important;
+}

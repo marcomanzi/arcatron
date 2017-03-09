@@ -5,23 +5,29 @@
             [arcatron.reagent.table :refer [paginated-table table-header]]
             [reagent.core :as r]))
 
-(def upload-file-label (r/atom "Select File with Prices"))
+(def initial-upload-label "Select File with Prices")
 
 (defn ^:export on-price-file-click
   [event]
-  (if-let [_ ((complement clojure.string/blank?) (str (-> event .-target .-value)))]
+  (if (> (count (array-seq (-> event .-target .-files))) 0)
     (do
       (.preventDefault event)
-      (js/alert (str "File Selected")))
-    (js/alert "No File Selected")))
+      (service/upload-file (aget (-> event .-target .-files) 0)))))
 
 (defn ^:export on-price-file-selection
   [event]
   (let [full-file-path (str (-> event .-target .-value))
         file-name (last (clojure.string/split full-file-path #"\\" ))]
-    (reset! upload-file-label (str "Upload " file-name))))
+    (set! (.-innerHTML (.getElementById js/document "upload-label")) (str "Upload " file-name))
+    event))
 
-(def input-html "<input type='file' style='display: none;' onclick='arcatron.prices.table.on_price_file_click(event)' onchange='arcatron.prices.table.on_price_file_selection(event)'></input>")
+(def input-html "<input id='upload-file' name='updload-file' type='file' style='display: none;' onclick='arcatron.prices.table.on_price_file_click(event)' onchange='arcatron.prices.table.on_price_file_selection(event);'></input>")
+
+(defn label-input [label] (str "<span id='upload-label'>" label "</span>"))
+
+(defn remove-all-prices []
+  (service/remove-all-prices)
+  (forward "#/prices"))
 
 (defn page []
   [:div.container
@@ -31,16 +37,13 @@
                                (table-header "Price per Minute")]
                      :element-key :uuid
                      :on-element-click-url #(str "#/prices/" (:uuid %))
-                     :elements @(service/prices @(price-page))
-                     :element-provider (partial service/prices)
-                     :count-provider (partial service/count-all)
+                     :element-provider (partial service/get-prices)
+                     :count-provider (partial service/prices-count)
                      :row-fields [:destination :prefix :price_per_minute]}]
    [:form.btn-toolbar
     [:button.btn.btn-primary {:on-click #(forward "#/prices/create")} "Add Price"]
     [:label.btn.btn-primary.file-input.col-span-1
      {:dangerouslySetInnerHTML
-      {:__html (str
-                 @upload-file-label
-                 input-html)}}]
-    [:button.btn.btn-primary {:on-click #(forward "#/prices/create")} "Remove all Prices"]]])
+      {:__html (str (label-input "Select File with Prices") input-html)}}]
+    [:button.btn.btn-primary {:on-click #(remove-all-prices)} "Remove all Prices"]]])
 

@@ -82,7 +82,7 @@ WHERE uuid = :uuid
 
 -- :name count-prices :? :n
 -- :doc retrieve count of prices
-SELECT count(*) FROM prices
+SELECT count(*) as c FROM prices
 
 -- :name get-prices :? :*
 -- :doc retrieve paginated prices

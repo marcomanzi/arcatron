@@ -74,12 +74,25 @@
     (POST "/create" []
       :return      Long
       :body-params [price]
-      :summary     "Create the price"
+      :summary     "Create or update the price"
       (ok (p/create-price! price)))
+    (POST "/remove" []
+      :body-params [uuid]
+      :summary     "Remove the price"
+      (if (p/delete! {:uuid uuid})
+        (accepted)
+        (forbidden)))
+    (POST "/remove-all" []
+      :summary     "Remove the price"
+      (if (p/delete-all!)
+        (accepted)
+        (forbidden)))
     (POST "/upload" []
       :multipart-params [file :- upload/TempFileUpload]
       :middleware       [upload/wrap-multipart-params]
-      (ok (p/save-prices-in-file file))))
+      (ok (let [{:keys [filename tempfile]} file ]
+            (p/save-prices-in-file tempfile)
+            {:success true}))))
 
   (context "/api" []
     :tags ["thingie"]

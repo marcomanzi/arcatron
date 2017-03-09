@@ -13,11 +13,14 @@
   ([table-id current-page]
    (swap! internal-state assoc (table-page-key table-id) current-page)))
 
+(defn table-max-rows
+  "Max rows to show in the page"
+  [] (get @internal-state :table-max-rows 15))
+
 (defn first-page? [table-id] (= 0 @(table-page table-id)))
 
 (defn last-page? [table-id count-elements-provider]
-  (= @(table-page table-id) (quot (- (count-elements-provider) 1) (:table-max-rows @internal-state)) ))
-
+  (= @(table-page table-id) (quot (- (:count (count-elements-provider)) 1) (:table-max-rows @internal-state))))
 
 (defn set-table-max-rows []
   (let [h (:window-height @internal-state)

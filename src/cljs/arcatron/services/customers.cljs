@@ -15,9 +15,8 @@
   (let [customer (first  (filter #(= (get % :uuid) (int  uuid)) @customers-db))]
     customer))
 
-(defn customers [page]
-  (let [size (:table-max-rows @db/app-state)
-        max-customers (count-customers)
+(defn customers [page size]
+  (let [max-customers (count-customers)
         max-start (- max-customers 1)
         start (let [page-start (* page size)]
                 (cond 

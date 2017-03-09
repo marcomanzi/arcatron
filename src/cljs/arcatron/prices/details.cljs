@@ -24,6 +24,14 @@
     [:h1 (str "Details for destination " (:destination @price))]
     [:h1 "New Price"]))
 
+(defn save-and-forward [price]
+  (service/save-price price)
+  (forward "#/prices"))
+
+(defn remove-and-forward [price]
+  (service/remove-price price)
+  (forward "#/prices"))
+
 (defn page []
   (let [uuid (session/get :uuid)
         price (r/atom (if uuid
@@ -35,5 +43,6 @@
              [atom-input price "Destination" :destination]
              [atom-input price "Prefix" :prefix]
              [atom-input price "Price Per minute" :price_per_minute]]
-            [:button.btn.btn-primary.col-md-2 "Save"]
+            [:button.btn.btn-primary.col-md-2 {:on-click #(save-and-forward @price)} "Save"]
+            (if uuid [:button.btn.btn-primary.col-md-2.offset-md-1 {:on-click #(remove-and-forward @price)} "Remove"])
             [:button.btn.btn-primary.col-md-2.offset-md-1 {:on-click #(forward "#/prices")} "Cancel"]])))

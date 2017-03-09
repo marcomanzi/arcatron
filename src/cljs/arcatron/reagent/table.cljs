@@ -38,8 +38,8 @@
    (if (not (s/last-page? table-id count-provider)) [page-item ">" (+ @(s/table-page table-id) 1) table-id])])
 
 (defn paginated-table
-  [{:keys [id headers elements element-provider count-provider element-key row-fields on-element-click-url] :as config}]
-  (let [elements @(element-provider @(s/table-page id))]
+  [{:keys [id headers element-provider count-provider element-key row-fields on-element-click-url] :as config}]
+  (let [elements @(element-provider @(s/table-page id) (s/table-max-rows))]
     [:span
      [:table {:class "table table-hover table-bordered"}
       [customer-table-head headers]

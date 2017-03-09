@@ -39,12 +39,12 @@
 
 (defn big-rand-int [] (rand-int 100000))
 
-(defn random-uuid []
+(defn cljc-random-uuid []
   #?(:clj (UUID/randomUUID)
      :cljs (cljs.core/random-uuid)))
 
 (defn generate-customer []
-  (map->Customer {:uuid (random-uuid)
+  (map->Customer {:uuid (cljc-random-uuid)
                   :name (random-name)
                   :surname (random-surname)
                   :fiscal_code (random-fc-generator)
@@ -57,24 +57,36 @@
 (defrecord Price [uuid destination prefix price_per_minute created_on])
 
 (defn generate-price [destination prefix price_per_minute]
-  #?(:clj (->Price (random-uuid) destination prefix price_per_minute (Date.)))
-  #?(:cljs (->Price (random-uuid) destination prefix price_per_minute nil)))
+  #?(:clj (->Price (cljc-random-uuid) destination prefix price_per_minute (Date.)))
+  #?(:cljs (->Price (cljc-random-uuid) destination prefix price_per_minute nil)))
 
 (defn empty-price []
-  (map->Price {:uuid nil :created_on (Date.)}))
+  #?(:clj (map->Price {:uuid nil :created_on (Date.)}))
+  #?(:cljs (map->Price {:uuid nil :created_on nil})))
+
+(defn update-price
+  "Update the price in input with the new values"
+  [{:keys [uuid created_on]} dest prefix price]
+  (->Price uuid dest prefix price created_on))
 
 (defrecord ^{:private true } CallDataRecord [uuid time_stamp record_sequence_number call_duration caller receiver nv cid id_service caller_uuid price_uuid errors])
+
+(defn cljc-read-string
+  "Read the string and return the clojure evalution"
+  [str]
+  #?(:clj (read-string str))
+  #?(:cljs (cljs.reader/read-string str)))
 
 (defn ->call-data-record [values]
   (let [base-cdr (apply ->CallDataRecord values)]
     (if-let [errors-str (:errors base-cdr)]
-      (assoc base-cdr :errors (read-string errors-str))
+      (assoc base-cdr :errors (cljc-read-string errors-str))
       (assoc base-cdr :errors []))))
 
 (defn map->call-data-record [map-values]
   (let [base-cdr (map->CallDataRecord map-values)]
     (if-let [errors-str (:errors base-cdr)]
-      (assoc base-cdr :errors (read-string errors-str))
+      (assoc base-cdr :errors (cljc-read-string errors-str))
       (assoc base-cdr :errors []))))
 
 (defn to-date
@@ -86,7 +98,7 @@
 
 (defn non-evaluated-call-data-record [cdr-values]
   (let [clean-values (map clojure.string/trim cdr-values)
-        cdr-with-all-strings (->call-data-record (concat [(random-uuid)] clean-values [nil nil nil]))
+        cdr-with-all-strings (->call-data-record (concat [(cljc-random-uuid)] clean-values [nil nil nil]))
         cdr-sanitized (-> cdr-with-all-strings
                           (assoc :time_stamp (to-date (:time_stamp cdr-with-all-strings)))
                           (assoc :call_duration (Integer/parseInt (:call_duration cdr-with-all-strings))))]

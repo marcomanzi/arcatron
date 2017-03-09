@@ -35,4 +35,7 @@
       (let [italy-tim-price (create-price "Italy Tim" "0651" "0.05")]
         (is (= "Italy" (:destination (p/get-price-by-prefix "06"))))
         (is (= "Italy Tim" (:destination (p/get-price-by-prefix "0651")))))
-      (map p/delete! @test-prices))))
+      (let [_ (p/delete-all!)
+            count-prices (p/save-prices-in-file "test/resources/small-listino.csv" )]
+        (is (= 12 count-prices))
+        (is (= 12 (count (p/get-paginated 0 100))))))))

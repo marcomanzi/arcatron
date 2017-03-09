@@ -50,5 +50,5 @@
             [:fieldset.form-group
              [:legend "Billing Informations"]
              [atom-input customer "Margin" :profit-margin]]
-            [:button.btn.btn-primary.col-md-2 {:on-click #(.log js/console (clj->js @state))} "Save"]
+            [:button.btn.btn-primary.col-md-2  "Save"]
             [:button.btn.btn-primary.col-md-2.offset-md-1 {:on-click #(forward "#/customers")} "Cancel"]])))

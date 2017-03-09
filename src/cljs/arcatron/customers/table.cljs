@@ -21,7 +21,6 @@
                                (table-header "Invoices Payed")]
                      :element-key :uuid
                      :on-element-click-url #(str "#/customers/" (:uuid %))
-                     :elements @(service/customers @(customer-page))
                      :element-provider (partial service/customers)
                      :count-provider (partial service/count-customers)
                      :row-fields [:name :surname :fiscal_code :phone_number :invoices_payed]}]
